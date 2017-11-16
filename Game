@@ -1,3 +1,4 @@
+var sem = 0;
 //First scene
 var drawScene1 = function(){
     image(getImage("space/background"), 0, 0);
@@ -19,7 +20,6 @@ var drawScene1 = function(){
 };
 //Second scene
 var drawScene2 = function(){
-    //draw = function() {
         background(239, 255, 181);
         fill(125, 143, 99);
         quad(0, 400, 100, 100, 300, 100, 400, 400);
@@ -27,18 +27,18 @@ var drawScene2 = function(){
         strokeWeight(1);
         line(166, 100, 133, 400);
         line(233, 100, 266, 400);
-        
-        keyPressed = function() {
-            if(key.code === 32){
-                drawScene1();
-                //startButton.draw();
-            }
-        };
+};       
+keyPressed = function() {
+    if(key.code === 32){
+        sem = 0;
+        drawScene1();
+        //startButton.draw();
+    }
+};
         //player
-        
-   //};
-    
-    
+
+var drawPlayer = function(x){
+    image(getImage("avatars/aqualine-seed"), x, 290);
 };
 
 var Button = function(config) {
@@ -47,7 +47,6 @@ var Button = function(config) {
     this.width = config.width || 100;
     this.height = config.height || 40;
     this.color = config.color || color(0, 17, 255);
-    this.lightButton = config.lightButton || function() {};
     this.onClick = config.onClick || function() {};
 };
 
@@ -87,7 +86,6 @@ var Button = function(config) {
     //handleMouseCLick
     Button.prototype.handleMouseClick = function() {
         if(this.isMouseInside()){
-            this.lightButton();
             this.onClick();
         }
     };
@@ -104,23 +102,22 @@ var Button = function(config) {
         width: 100,
         height: 40,
         color: color(255, 255, 255),
-        lightButton: function(){
-            lightButton();
-        },
         onClick: function(){
+            sem = 1;
             drawScene2();
+            drawPlayer(140);
         }
     });
-   
-    drawScene1();
-    startButton.draw();
-    draw = function() {
-        
-        mouseClicked = function() {
-            startButton.handleMouseClick();
-        };
-        
+draw = function() {
+    if(sem === 0){
+        drawScene1();
+        startButton.draw();
+    }
+    mouseClicked = function(){
+        startButton.handleMouseClick();
     };
+};
+    
    
   
 

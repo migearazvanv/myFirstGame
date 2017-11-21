@@ -1,4 +1,6 @@
-var sem = 0;
+var semScene = 1;
+var stars = [];
+var Xplayer;
 //First scene
 var drawScene1 = function(){
     image(getImage("space/background"), 0, 0);
@@ -28,18 +30,17 @@ var drawScene2 = function(){
         line(166, 100, 133, 400);
         line(233, 100, 266, 400);
 };       
-keyPressed = function() {
-    if(key.code === 32){
-        sem = 0;
-        drawScene1();
-        //startButton.draw();
-    }
-};
-        //player
 
-var drawPlayer = function(x){
-    image(getImage("avatars/aqualine-seed"), x, 290);
+//player
+var Player = function(config){
+    this.x = config.x || 147;
+    this.stars = 0;
 };
+var playerObj = new Player(140);
+    
+    Player.prototype.draw = function(Xplayer){
+        image(getImage("cute/CharacterBoy"), Xplayer, 250);
+    };
 
 var Button = function(config) {
     this.x = config.x || 150;
@@ -49,10 +50,7 @@ var Button = function(config) {
     this.color = config.color || color(0, 17, 255);
     this.onClick = config.onClick || function() {};
 };
-
 //Start button
-    
-    //Design
     Button.prototype.isMouseInside = function(){
         return mouseX > this.x && 
                mouseX < (this.x + this.width) && 
@@ -66,58 +64,91 @@ var Button = function(config) {
         textSize(21);
         text("START", 167, 177);
         mouseClicked = function() {
-            if(this.isMouseInside()/* && mouseIsPressed*/){
+            if(this.isMouseInside()){
                 text("handle", 150, 150);
-            fill(60, 255, 0);
-            rect(150, 150, 100, 40, 8);
-                
-                text("apasat", 100, 50);
-                //drawScene2();
-                //if(mouseReleased){
-               //     drawScene2();
-                //}
             }
             else {
                 fill(this.color);
             }
         };
     };
-    
     //handleMouseCLick
     Button.prototype.handleMouseClick = function() {
         if(this.isMouseInside()){
             this.onClick();
         }
     };
-
-//Player
-    var lightButton = function() {
-        text("lightButton", 150, 150);
+//light button
+var Star = function(x, y){
+    this.x = x;
+    this.y = y;
+};
+    Star.prototype.draw = function() {
+        image(getImage("cute/Star"), this.x, this.y);
     };
-//main
-    
-    var startButton = new Button({
+var startButton = new Button({
         x: 150,
         y: 150,
         width: 100,
         height: 40,
         color: color(255, 255, 255),
         onClick: function(){
-            sem = 1;
             drawScene2();
-            drawPlayer(140);
+            playerObj.draw(147);
+            semScene = 2;
         }
     });
+//main
+drawScene1();
+startButton.draw();
+for(var i = 0; i < 1; i++){
+    stars.push(new Star(i*10 +50, i*10 + 50));
+}
 draw = function() {
-    if(sem === 0){
-        drawScene1();
-        startButton.draw();
-    }
+    
     mouseClicked = function(){
         startButton.handleMouseClick();
     };
+    if(semScene === 2){
+        //drawScene2();
+        /*for(var i = 0; i < stars.length; i++){
+            drawScene2();
+            playerObj.draw();
+            stars[i].draw();
+            stars[i].x -=1;
+        }*/
+    }
+    if(semScene === 2){
+        for(var i = 0; i < stars.length; i++){
+            drawScene2();
+            playerObj.draw(Xplayer);
+            stars[i].draw();
+            stars[i].y +=1;
+        }
+    }
+    keyPressed = function(){
+        if(key.code === 97 && semScene === 2){     //left
+            Xplayer = 20;
+            drawScene2();
+            playerObj.draw(Xplayer);
+        }
+        if(key.code === 115 && semScene === 2){    //mid
+            Xplayer = 147;
+            drawScene2();
+            playerObj.draw(Xplayer);
+        }
+        if(key.code === 100 && semScene === 2){    //right
+            Xplayer = 275;
+            drawScene2();
+            playerObj.draw(Xplayer);
+        }
+        if(key.code === 32 && semScene === 2){
+            semScene = 1;
+            drawScene1();
+            startButton.draw();
+        }
+    };
 };
-    
    
   
 

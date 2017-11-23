@@ -1,6 +1,10 @@
 var semScene = 1;
-var stars = [];
-var Xplayer;
+var stars1 = [];
+var stars2 = [];
+var xPlayer = 145;
+var x;
+var sem = 1;
+
 //First scene
 var drawScene1 = function(){
     image(getImage("space/background"), 0, 0);
@@ -31,16 +35,6 @@ var drawScene2 = function(){
         line(233, 100, 266, 400);
 };       
 
-//player
-var Player = function(config){
-    this.x = config.x || 147;
-    this.stars = 0;
-};
-var playerObj = new Player(140);
-    
-    Player.prototype.draw = function(Xplayer){
-        image(getImage("cute/CharacterBoy"), Xplayer, 250);
-    };
 
 var Button = function(config) {
     this.x = config.x || 150;
@@ -79,6 +73,7 @@ var Button = function(config) {
         }
     };
 //light button
+                                        //STAR
 var Star = function(x, y){
     this.x = x;
     this.y = y;
@@ -86,6 +81,11 @@ var Star = function(x, y){
     Star.prototype.draw = function() {
         image(getImage("cute/Star"), this.x, this.y);
     };
+var Player = function(config){
+    this.x = config.x || 145;
+    this.stars = 0;
+};
+var playerObj = new Player(145);
 var startButton = new Button({
         x: 150,
         y: 150,
@@ -94,61 +94,90 @@ var startButton = new Button({
         color: color(255, 255, 255),
         onClick: function(){
             drawScene2();
-            playerObj.draw(147);
+            playerObj.draw(145);
             semScene = 2;
+            xPlayer = 145;
         }
     });
+
+
+/*for(var i = 0; i < 1; i++){
+    stars2.push(new Star(i*50, i*50));
+}*/
+                                               //PLAYER
+
+    Player.prototype.draw = function(){
+        image(getImage("cute/CharacterBoy"), xPlayer, 250);
+    };
+    Player.prototype.drawLeft = function(){
+        if(xPlayer === 145 && sem === 1){
+            xPlayer = 25;
+            image(getImage("cute/CharacterBoy"), xPlayer, 250);
+            sem = 0;
+            text("drawLeft145", 50, 50);
+        }
+        if(xPlayer === 265 && sem === 1){
+            xPlayer = 145;
+            image(getImage("cute/CharacterBoy"), xPlayer, 250);
+            sem = 0;
+            text("drawLeft265", 150, 50);
+        }
+    };
+        Player.prototype.drawRight = function(){
+        if(xPlayer === 145 && sem === 1){
+            xPlayer = 265;
+            image(getImage("cute/CharacterBoy"), xPlayer, 250);
+            sem = 0;
+        }
+        if(xPlayer === 25 && sem === 1){
+            xPlayer = 145;
+            image(getImage("cute/CharacterBoy"), xPlayer, 250);
+            sem = 0;
+        }
+    };
 //main
 drawScene1();
 startButton.draw();
-for(var i = 0; i < 1; i++){
-    stars.push(new Star(i*10 +50, i*10 + 50));
+for(var i = 0; i < 3; i++){
+    stars1.push(new Star( 110, i *(-50)));
 }
+
 draw = function() {
     
     mouseClicked = function(){
         startButton.handleMouseClick();
     };
-    if(semScene === 2){
-        //drawScene2();
-        /*for(var i = 0; i < stars.length; i++){
-            drawScene2();
-            playerObj.draw();
-            stars[i].draw();
-            stars[i].x -=1;
-        }*/
-    }
-    if(semScene === 2){
-        for(var i = 0; i < stars.length; i++){
-            drawScene2();
-            playerObj.draw(Xplayer);
-            stars[i].draw();
-            stars[i].y +=1;
-        }
-    }
-    keyPressed = function(){
-        if(key.code === 97 && semScene === 2){     //left
-            Xplayer = 20;
-            drawScene2();
-            playerObj.draw(Xplayer);
-        }
-        if(key.code === 115 && semScene === 2){    //mid
-            Xplayer = 147;
-            drawScene2();
-            playerObj.draw(Xplayer);
-        }
-        if(key.code === 100 && semScene === 2){    //right
-            Xplayer = 275;
-            drawScene2();
-            playerObj.draw(Xplayer);
-        }
-        if(key.code === 32 && semScene === 2){
-            semScene = 1;
-            drawScene1();
-            startButton.draw();
-        }
+    keyReleased = function(){
+         sem = 1;
     };
+    if(semScene === 2){
+        for(var i = 0; i < stars1.length; i++){
+            drawScene2();
+            stars1[i].draw();
+            playerObj.draw();
+            
+            stars1[i].y +=1;
+            stars1[i].x -=0.2;
+            //stars2[i].y +=1;
+        }
+           
+            if(keyIsPressed){
+                if(keyCode === 37){
+                    playerObj.drawLeft();
+                }
+                if(keyCode === 39){
+                    playerObj.drawRight();
+                }
+                if(keyCode === 32){
+                    semScene = 1;
+                    drawScene1();
+                    startButton.draw();
+                }
+                
+            }
+    }
 };
+
    
   
 

@@ -114,13 +114,11 @@ var startButton = new Button({
             xPlayer = 25;
             image(getImage("cute/CharacterBoy"), xPlayer, 250);
             sem = 0;
-            text("drawLeft145", 50, 50);
         }
         if(xPlayer === 265 && sem === 1){
             xPlayer = 145;
             image(getImage("cute/CharacterBoy"), xPlayer, 250);
             sem = 0;
-            text("drawLeft265", 150, 50);
         }
     };
         Player.prototype.drawRight = function(){
@@ -138,8 +136,8 @@ var startButton = new Button({
 //main
 drawScene1();
 startButton.draw();
-for(var i = 0; i < 3; i++){
-    stars1.push(new Star( 110, i *(-50)));
+for(var i = 0; i < 10; i++){
+    stars1.push(new Star( i*35 + 70, i *(-250)));
 }
 
 draw = function() {
@@ -150,17 +148,16 @@ draw = function() {
     keyReleased = function(){
          sem = 1;
     };
+    
     if(semScene === 2){
+        drawScene2();
+        playerObj.draw();
         for(var i = 0; i < stars1.length; i++){
-            drawScene2();
             stars1[i].draw();
-            playerObj.draw();
-            
-            stars1[i].y +=1;
-            stars1[i].x -=0.2;
+            stars1[i].y += 7;
+            stars1[i].x -= 1;
             //stars2[i].y +=1;
         }
-           
             if(keyIsPressed){
                 if(keyCode === 37){
                     playerObj.drawLeft();
@@ -168,13 +165,14 @@ draw = function() {
                 if(keyCode === 39){
                     playerObj.drawRight();
                 }
-                if(keyCode === 32){
+            }
+        keyPressed = function(){
+            if(keyCode === 32){
                     semScene = 1;
                     drawScene1();
                     startButton.draw();
                 }
-                
-            }
+        };
     }
 };
 

@@ -1,9 +1,11 @@
 var semScene = 1;
 var stars1 = [];
 var stars2 = [];
-var xPlayer = 145;
+var stars3 = [];
+var xPlayer = 150;
 var x;
 var sem = 1;
+var score = 0;
 
 //First scene
 var drawScene1 = function(){
@@ -26,13 +28,12 @@ var drawScene1 = function(){
 };
 //Second scene
 var drawScene2 = function(){
-        background(239, 255, 181);
+        background(26, 25, 25);
         fill(125, 143, 99);
-        quad(0, 400, 100, 100, 300, 100, 400, 400);
-        fill(0, 0, 0);
+        quad(0, 400, 0, 100, 400, 100, 400, 400);
         strokeWeight(1);
-        line(166, 100, 133, 400);
-        line(233, 100, 266, 400);
+        line(133, 100, 133, 400);
+        line(266, 100, 266, 400);
 };       
 
 
@@ -81,11 +82,11 @@ var Star = function(x, y){
     Star.prototype.draw = function() {
         image(getImage("cute/Star"), this.x, this.y);
     };
+
 var Player = function(config){
-    this.x = config.x || 145;
-    this.stars = 0;
+    this.x = config.x || 150;
 };
-var playerObj = new Player(145);
+var playerObj = new Player(150);
 var startButton = new Button({
         x: 150,
         y: 150,
@@ -94,9 +95,9 @@ var startButton = new Button({
         color: color(255, 255, 255),
         onClick: function(){
             drawScene2();
-            playerObj.draw(145);
+            playerObj.draw(150);
             semScene = 2;
-            xPlayer = 145;
+            xPlayer = 150;
         }
     });
 
@@ -110,36 +111,63 @@ var startButton = new Button({
         image(getImage("cute/CharacterBoy"), xPlayer, 250);
     };
     Player.prototype.drawLeft = function(){
-        if(xPlayer === 145 && sem === 1){
-            xPlayer = 25;
+        if(xPlayer === 150 && sem === 1){
+            xPlayer = 15;
             image(getImage("cute/CharacterBoy"), xPlayer, 250);
             sem = 0;
         }
-        if(xPlayer === 265 && sem === 1){
-            xPlayer = 145;
+        if(xPlayer === 280 && sem === 1){
+            xPlayer = 150;
             image(getImage("cute/CharacterBoy"), xPlayer, 250);
             sem = 0;
         }
     };
-        Player.prototype.drawRight = function(){
-        if(xPlayer === 145 && sem === 1){
-            xPlayer = 265;
+    Player.prototype.drawRight = function(){
+        if(xPlayer === 150 && sem === 1){
+            xPlayer = 280;
             image(getImage("cute/CharacterBoy"), xPlayer, 250);
             sem = 0;
         }
-        if(xPlayer === 25 && sem === 1){
-            xPlayer = 145;
+        if(xPlayer === 15 && sem === 1){
+            xPlayer = 150;
             image(getImage("cute/CharacterBoy"), xPlayer, 250);
             sem = 0;
+        }
+    };
+    Player.prototype.collectStar1 = function(stars1){
+        if(stars1.x === xPlayer && 
+            (stars1.y <= (250 + 20) && stars1.y >= (250 - 20))){
+            stars1.y = +400;
+            score++;
+            
+        }
+    };
+    Player.prototype.collectStar2 = function(stars2){
+        if(stars2.x === xPlayer && 
+            (stars2.y <= (250 + 20) && stars2.y >= (250 - 20))){
+            stars2.y = +400;
+            score++;
+        }
+    };
+    Player.prototype.collectStar3 = function(stars3){
+        if(stars3.x === xPlayer && 
+            (stars3.y <= (250 + 20) && stars3.y >= (250 - 20))){
+            stars3.y = +400;
+            score++;
         }
     };
 //main
 drawScene1();
 startButton.draw();
-for(var i = 0; i < 10; i++){
-    stars1.push(new Star( i*35 + 70, i *(-250)));
+for(var i = 1; i < 10; i++){
+    stars1.push(new Star(15, i * random(-250, -1500)));
 }
-
+for(var i = 1; i < 10; i++){
+    stars2.push(new Star(150, i * random(-350, -900)));
+}
+for(var i = 1; i < 10; i++){
+    stars3.push(new Star(280, i * random(-350, -1300)));
+}
 draw = function() {
     
     mouseClicked = function(){
@@ -154,10 +182,22 @@ draw = function() {
         playerObj.draw();
         for(var i = 0; i < stars1.length; i++){
             stars1[i].draw();
-            stars1[i].y += 7;
-            stars1[i].x -= 1;
-            //stars2[i].y +=1;
+            playerObj.collectStar1(stars1[i]);
+            stars1[i].y += 6;
+            
         }
+        for(var i = 0; i < stars2.length; i++){
+            stars2[i].draw();
+            playerObj.collectStar2(stars2[i]);
+            stars2[i].y += 4;
+        }
+        for(var i = 0; i < stars3.length; i++){
+            stars3[i].draw();
+            playerObj.collectStar3(stars3[i]);
+            stars3[i].y += 5;
+        }
+        fill(255, 0, 0);
+        text("score:" + score, 310, 20);
             if(keyIsPressed){
                 if(keyCode === 37){
                     playerObj.drawLeft();

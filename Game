@@ -24,7 +24,10 @@ var drawScene1 = function(){
     image(getImage("space/girl2"), 300, 225, 150, 150);
     image(getImage("cute/StoneBlockTall"), 300, 160, 10, 190);
     image(getImage("cute/Key"), 220, 250, 70, 70);
-
+    textSize(10);
+    fill(59, 30, 0);
+    text("©Răvan Migea", 324, 370);
+    text("version: 1.0", 324, 381);
 };
 //Second scene
 var drawScene2 = function(){
@@ -35,45 +38,60 @@ var drawScene2 = function(){
         line(133, 100, 133, 400);
         line(266, 100, 266, 400);
 };       
-
+var drawEnd = function(){
+    background(54, 48, 48);
+    text("YOU WIN!!!!!", 140, 100);
+    textSize(10);
+    fill(255, 255, 255);
+    text("Press space to play again!", 140, 300);
+    score = 0;
+};
 
 var Button = function(config) {
     this.x = config.x || 150;
     this.y = config.y || 150;
     this.width = config.width || 100;
     this.height = config.height || 40;
-    this.color = config.color || color(0, 17, 255);
+    this.color = config.color;// || color(0, 17, 255);
     this.onClick = config.onClick || function() {};
 };
 //Start button
     Button.prototype.isMouseInside = function(){
-        return mouseX > this.x && 
-               mouseX < (this.x + this.width) && 
-               mouseY > this.y && 
-               mouseY < (this.y + this.height);
+        if(semScene === 1 || semScene === 3){
+            return mouseX > this.x && 
+                   mouseX < (this.x + this.width) && 
+                   mouseY > this.y && 
+                   mouseY < (this.y + this.height);
+        }
     };
     Button.prototype.draw = function() {
         fill(191, 69, 69);
         rect(150, 150, 100, 40, 8);
         fill(14, 104, 194);
         textSize(21);
-        text("START", 167, 177);
-        mouseClicked = function() {
-            if(this.isMouseInside()){
-                text("handle", 150, 150);
-            }
-            else {
-                fill(this.color);
-            }
-        };
+        if(semScene === 1){
+            text("START", 167, 177);
+        }else{
+            text("END", 167, 167);
+        }
     };
-    //handleMouseCLick
     Button.prototype.handleMouseClick = function() {
         if(this.isMouseInside()){
             this.onClick();
         }
     };
 //light button
+    Button.prototype.drawButtonClicked = function() {
+        fill(207, 44, 44);
+        rect(150, 150, 100, 40, 8);
+        fill(16, 119, 222);
+        textSize(21);
+        if(semScene === 1){
+            text("START", 167, 177);
+        }else{
+            text("END", 167, 167);
+        }
+    };
                                         //STAR
 var Star = function(x, y){
     this.x = x;
@@ -88,25 +106,33 @@ var Player = function(config){
 };
 var playerObj = new Player(150);
 var startButton = new Button({
-        x: 150,
-        y: 150,
-        width: 100,
-        height: 40,
-        color: color(255, 255, 255),
-        onClick: function(){
-            drawScene2();
-            playerObj.draw(150);
-            semScene = 2;
-            xPlayer = 150;
-        }
-    });
-
-
-/*for(var i = 0; i < 1; i++){
-    stars2.push(new Star(i*50, i*50));
-}*/
+    x: 150,
+    y: 150,        
+    width: 100,
+    height: 40,
+    color: color(255, 255, 255),
+    onClick: function(){
+        startButton.drawButtonClicked();
+        drawScene2();
+        playerObj.draw(150);
+        semScene = 2;
+        xPlayer = 150;
+    }
+});
+/*var endButton = new Button({
+    x: 150,
+    y: 150,
+    width: 100,
+    height: 40,
+    color: color(255, 255, 255),
+    onClick: function(){
+        semScene = 1;
+        drawScene1();
+        startButton.draw();
+        
+    }
+});*/
                                                //PLAYER
-
     Player.prototype.draw = function(){
         image(getImage("cute/CharacterBoy"), xPlayer, 250);
     };
@@ -139,7 +165,7 @@ var startButton = new Button({
             (stars1.y <= (250 + 20) && stars1.y >= (250 - 20))){
             stars1.y = +400;
             score++;
-            
+            playSound(getSound("rpg/metal-chime"));
         }
     };
     Player.prototype.collectStar2 = function(stars2){
@@ -147,6 +173,7 @@ var startButton = new Button({
             (stars2.y <= (250 + 20) && stars2.y >= (250 - 20))){
             stars2.y = +400;
             score++;
+            playSound(getSound("rpg/metal-chime"));
         }
     };
     Player.prototype.collectStar3 = function(stars3){
@@ -154,29 +181,42 @@ var startButton = new Button({
             (stars3.y <= (250 + 20) && stars3.y >= (250 - 20))){
             stars3.y = +400;
             score++;
+            playSound(getSound("rpg/metal-chime"));
         }
     };
 //main
 drawScene1();
 startButton.draw();
-for(var i = 1; i < 10; i++){
+for(var i = 1; i < 30; i++){
     stars1.push(new Star(15, i * random(-250, -1500)));
 }
-for(var i = 1; i < 10; i++){
+for(var i = 1; i < 30; i++){
     stars2.push(new Star(150, i * random(-350, -900)));
 }
-for(var i = 1; i < 10; i++){
+for(var i = 1; i < 30; i++){
     stars3.push(new Star(280, i * random(-350, -1300)));
 }
 draw = function() {
-    
+    mousePressed = function(){
+        if(startButton.isMouseInside()){
+            startButton.drawButtonClicked();
+            //endButton.drawButtonClick();
+        }
+    };
     mouseClicked = function(){
-        startButton.handleMouseClick();
+        if(semScene === 1){// || semScene === 0){
+            startButton.handleMouseClick();
+            //endButton.handleMouseClick();
+        }
     };
     keyReleased = function(){
          sem = 1;
     };
-    
+    if(semScene === 0){
+        drawScene1();
+        startButton.draw();
+        semScene = 1;
+    }
     if(semScene === 2){
         drawScene2();
         playerObj.draw();
@@ -196,8 +236,15 @@ draw = function() {
             playerObj.collectStar3(stars3[i]);
             stars3[i].y += 5;
         }
-        fill(255, 0, 0);
-        text("score:" + score, 310, 20);
+        if(score === 20){
+            semScene = 3;
+            drawEnd();
+            //endButton.draw();
+        }
+        else{
+            fill(255, 0, 0);
+            text("score:" + score, 310, 20);
+        }
             if(keyIsPressed){
                 if(keyCode === 37){
                     playerObj.drawLeft();
